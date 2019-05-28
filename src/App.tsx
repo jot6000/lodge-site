@@ -1,7 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import ReactModal from 'react-modal';
+import LoginPopUp from './popUps/loginPopUp'
 
 function Home() {
   return(
@@ -34,11 +35,27 @@ class App extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      logedIn: true,
+      logedIn: false,
       loginPopupOpen: false,
       isAdmin: true
     };
 }
+  //Log in button
+  loginPress = () => {
+    this.setState({loginPopupOpen:true})
+  }
+  //Login popup functions
+  loginClosePress = () => {
+    this.setState({loginPopupOpen:false})
+  }
+  loginSubmitPress = () => {
+    this.setState({logedIn:true,loginPopupOpen:false})
+    this.loginClosePress()
+  }
+  //Other
+  signOut = () =>{
+    this.setState({logedIn:false})
+  }
   render() {
     if(this.state.logedIn === true){
       return <Router>
@@ -49,8 +66,8 @@ class App extends React.Component<IProps, IState> {
               <div>Admin Portal</div>
             }
             <div>Profile Page</div>
+            <div onClick={this.signOut}>Sign Out</div>
           </header>
-
           <Route path="/" exact component={Home} />
           <Route path="/notHome" exact component={NotHome} />
         </div>
@@ -61,7 +78,40 @@ class App extends React.Component<IProps, IState> {
         <div className="App">
           <header className="App-header">
             <Link to="/">Biwagani</Link>
-            <div>Login / Register</div>
+            <div onClick={this.loginPress}>Login / Register</div>
+            <ReactModal
+            isOpen={this.state.loginPopupOpen}
+            style={{
+              overlay: {
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(255, 255, 255, 0.75)'
+              },
+              content: {
+                position: 'absolute',
+                width: '40vw',
+                height: '60vh',
+                top: '20vh',
+                left: '30vw',
+                border: '1px solid #ccc',
+                background: '#fff',
+                overflow: 'auto',
+                WebkitOverflowScrolling: 'touch',
+                borderRadius: '4px',
+                outline: 'none',
+                padding: '20px'
+              }
+            }}
+            >
+              <LoginPopUp
+                register={this.loginSubmitPress}
+                login={this.loginSubmitPress}
+                close={this.loginClosePress}
+              ></LoginPopUp>
+            </ReactModal>
           </header>
 
           <Route path="/" exact component={Home} />
